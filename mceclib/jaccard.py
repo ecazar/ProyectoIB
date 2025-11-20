@@ -28,12 +28,12 @@ def search_jaccard(query_text, corpus_preprocessing, corpus, op=0):
 
     Args:
         query_text (str): El texto de la consulta cruda.
-        corpus_preprocessing: corpus previamente limpiado y tokenizado.
-        corpus (list[str]): El corpus original (lista de textos crudos).
+        corpus_preprocessing (Series): corpus previamente limpiado y tokenizado.
+        corpus (DataFrame): El corpus original (lista de textos crudos).
         op: Opción para stemming (0) o lematización (1) en el preprocesamiento.
 
     Returns:
-        results_df: DataFrame con textos originales y scores de Jaccard.
+        results_df (DataFrame):id, textos originales y scores de Jaccard.
     """
     query_tokens = preprocessing2tokens(query_text, op=op)
     jaccard_scores = []
@@ -41,8 +41,8 @@ def search_jaccard(query_text, corpus_preprocessing, corpus, op=0):
         score = jaccard_similarity(query_tokens, doc_tokens)
         jaccard_scores.append(score)
     results_df = pd.DataFrame({
-        'doc_index': corpus.index,
-        'reviews': corpus,
+        'id': corpus[corpus.columns[0]], # ej: "'you are an attorney'": ['test-law-lghbacpsba-pro04a']
+        'text': corpus[corpus.columns[1]],
         'scores': jaccard_scores
     })
     results_df = results_df.sort_values(by='scores', ascending=False)

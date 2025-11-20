@@ -8,7 +8,7 @@ def build_tfidf(corpus_preprocessing):
         Procesa el corpus y genera la matriz TF-IDF y el vectorizador.
 
         Args:
-            corpus_preprocessing: corpus previamente limpiado y tokenizado.
+            corpus_preprocessing (Series): corpus previamente limpiado y tokenizado.
 
         Returns:
             tfidf_matrix: matriz de TF-IDF.
@@ -27,7 +27,7 @@ def search_tdifd(query_text, vectorizer, tfidf_matrix, corpus, op=0):
                 query_text (str): El texto de la consulta cruda.
                 vectorizer: vectorizador entrenado de TF-IDF.
                 tfidf_matrix: matriz de TF-IDF.
-                corpus (list[str]): El corpus original (lista de textos crudos).
+                corpus (DataFrame): El corpus original (lista de textos crudos).
                 op: Opción para stemming (0) o lematización (1) en el preprocesamiento.
 
             Returns:
@@ -37,8 +37,8 @@ def search_tdifd(query_text, vectorizer, tfidf_matrix, corpus, op=0):
     query_vector = vectorizer.transform([query])
     cosine_scores = cosine_similarity(query_vector, tfidf_matrix).flatten()
     results_df = pd.DataFrame({
-        'doc_index': corpus.index,
-        'reviews': corpus,
+        'id': corpus[corpus.columns[0]],
+        'text': corpus[corpus.columns[1]],
         'scores': cosine_scores
     })
     results_df = results_df.sort_values(by='scores', ascending=False)

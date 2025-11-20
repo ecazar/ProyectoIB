@@ -13,7 +13,7 @@ def build_bm25_model(corpus_preprocessing):
 
     Returns:
         bm25_model (BM25Okapi): El modelo BM25 entrenado.
-        corpus_tokens (list[list[str]]): El corpus tokenizado usado para el entrenamiento.
+        corpus_tokens (Series): El corpus tokenizado usado para el entrenamiento.
     """
     bm25_model = BM25Okapi(corpus_preprocessing)
     return bm25_model
@@ -28,7 +28,7 @@ def search_bm25(query_text, bm25_model, corpus, op=0):
     Args:
         query_text (str): El texto de la consulta cruda.
         bm25_model (BM25Okapi): El modelo BM25 entrenado.
-        corpus (list[str]): El corpus original (lista de textos crudos).
+        corpus (DataFrame): El corpus original (lista de textos crudos).
         op: Opción para stemming (0) o lematización (1) en el preprocesamiento.
 
     Returns:
@@ -37,9 +37,9 @@ def search_bm25(query_text, bm25_model, corpus, op=0):
     query_tokens = preprocessing2tokens(query_text, op=op)
     doc_scores = bm25_model.get_scores(query_tokens)
     results_df = pd.DataFrame({
-        'doc_index': corpus.index,
-        'reviews': corpus,  # Texto original del documento
-        'scores': doc_scores  # Puntuación BM25 obtenida
+        'id': corpus[corpus.columns[0]],
+        'text': corpus[corpus.columns[1]],
+        'scores': doc_scores
     })
     results_df = results_df.sort_values(by='scores', ascending=False)
     results_df = results_df.reset_index(drop=True)
